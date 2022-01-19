@@ -77,7 +77,8 @@ class Detector(object):
                  trt_opt_shape=640,
                  trt_calib_mode=False,
                  cpu_threads=1,
-                 enable_mkldnn=False):
+                 enable_mkldnn=False,
+                 enable_profile=False):
         self.pred_config = pred_config
         self.predictor, self.config = load_predictor(
             model_dir,
@@ -91,7 +92,8 @@ class Detector(object):
             trt_opt_shape=trt_opt_shape,
             trt_calib_mode=trt_calib_mode,
             cpu_threads=cpu_threads,
-            enable_mkldnn=enable_mkldnn)
+            enable_mkldnn=enable_mkldnn,
+            enable_profile=enable_profile)
         self.det_times = Timer()
         self.cpu_mem, self.gpu_mem, self.gpu_util = 0, 0, 0
 
@@ -212,7 +214,8 @@ class DetectorSOLOv2(Detector):
                  trt_opt_shape=640,
                  trt_calib_mode=False,
                  cpu_threads=1,
-                 enable_mkldnn=False):
+                 enable_mkldnn=False,
+                 enable_profile=False):
         self.pred_config = pred_config
         self.predictor, self.config = load_predictor(
             model_dir,
@@ -226,7 +229,8 @@ class DetectorSOLOv2(Detector):
             trt_opt_shape=trt_opt_shape,
             trt_calib_mode=trt_calib_mode,
             cpu_threads=cpu_threads,
-            enable_mkldnn=enable_mkldnn)
+            enable_mkldnn=enable_mkldnn,
+            enable_profile=enable_profile)
         self.det_times = Timer()
         self.cpu_mem, self.gpu_mem, self.gpu_util = 0, 0, 0
 
@@ -304,7 +308,8 @@ class DetectorPicoDet(Detector):
                  trt_opt_shape=640,
                  trt_calib_mode=False,
                  cpu_threads=1,
-                 enable_mkldnn=False):
+                 enable_mkldnn=False,
+                 enable_profile=True):
         self.pred_config = pred_config
         self.predictor, self.config = load_predictor(
             model_dir,
@@ -318,7 +323,8 @@ class DetectorPicoDet(Detector):
             trt_opt_shape=trt_opt_shape,
             trt_calib_mode=trt_calib_mode,
             cpu_threads=cpu_threads,
-            enable_mkldnn=enable_mkldnn)
+            enable_mkldnn=enable_mkldnn,
+            enable_profile=enable_profile)
         self.det_times = Timer()
         self.cpu_mem, self.gpu_mem, self.gpu_util = 0, 0, 0
 
@@ -480,7 +486,8 @@ def load_predictor(model_dir,
                    trt_opt_shape=640,
                    trt_calib_mode=False,
                    cpu_threads=1,
-                   enable_mkldnn=False):
+                   enable_mkldnn=False,
+                   enable_profile=False):
     """set AnalysisConfig, generate AnalysisPredictor
     Args:
         model_dir (str): root path of __model__ and __params__
@@ -515,6 +522,7 @@ def load_predictor(model_dir,
     else:
         config.disable_gpu()
         config.set_cpu_math_library_num_threads(cpu_threads)
+        config.enable_profile()
         if enable_mkldnn:
             try:
                 # cache 10 different shapes for mkldnn to avoid memory leak

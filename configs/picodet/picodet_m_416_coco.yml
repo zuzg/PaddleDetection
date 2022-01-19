@@ -9,5 +9,6 @@ _BASE_: [
 weights: output/picodet_m_416_coco/model_final
 find_unused_parameters: True
 use_ema: true
+use_gpu: false
 cycle_epoch: 40
 snapshot_epoch: 10
